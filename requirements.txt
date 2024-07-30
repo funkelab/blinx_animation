@@ -1,0 +1,16 @@
+colorama==0.4.6
+colour==0.1.5
+commonmark==0.9.1
+manim==0.4.0
+manimpango==0.2.6
+networkx==2.8.8
+numpy==2.0.1
+pillow==10.4.0
+pycairo==1.26.1
+pydub==0.25.1
+pygments==2.18.0
+rich==6.2.0
+scipy==1.14.0
+setuptools==72.1.0
+tqdm==4.66.4
+typing-extensions==3.10.0.2
