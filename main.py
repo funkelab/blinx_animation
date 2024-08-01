@@ -4,7 +4,7 @@ from manim import *
 
 np.random.seed(1)
 
-colors = color_gradient([DARK_GRAY, WHITE], 6)
+colors = color_gradient([DARK_GRAY, WHITE], 8)
 
 img = skimage.io.imread("experimental_crop.tif")
 max_proj = skimage.io.imread("max_intensity.png")
@@ -26,7 +26,7 @@ class Blink(AnimationGroup):
                 Indicate(
                     mobject,
                     run_time=np.random.uniform(min_wait, max_wait) / 2,
-                    color=WHITE,
+                    color=LIGHT_GRAY,
                 )
             )
         super().__init__(*animations, **kwargs)
@@ -78,18 +78,19 @@ class Galaxy(Group):
         positions = positions[:count]
         positions = [
             (
-                x * 0.25 + np.random.uniform(0, 0.1),
-                y * 0.25 + np.random.uniform(0, 0.1),
+                x * 0.03 + np.random.uniform(0, 0.01),
+                y * 0.03 + np.random.uniform(0, 0.01),
                 0,
             )
             for x, y in positions
         ]
-        self.stars = [Dot(i, radius=0.15 * 0.25, color=DARK_GRAY) for i in positions]
+        self.stars = [Dot(i, radius=0.15 * 0.075, color=DARK_GRAY) for i in positions]
         super().__init__(*self.stars)
 
 
 class Main(MovingCameraScene):
     def construct(self):
+        self.next_section()
         galaxies = Group(
             *(
                 Galaxy(np.random.randint(3, 11))
@@ -127,22 +128,22 @@ class Main(MovingCameraScene):
         camera.frame.move_to(main_star.get_center())
 
         self.wait()
-        self.next_section()
 
+        self.next_section()
         for _ in range(3):
             self.play(Blink(main_star, min_wait=0.5, max_wait=1.5))
             self.wait(np.random.uniform(0.3, 0.9))
         self.wait()
-        self.next_section()
 
+        self.next_section()
         self.play(
             camera.frame.animate.set(height=main_galaxy.height).move_to(
                 main_galaxy.get_center()
             )
         )
         self.wait()
-        self.next_section()
 
+        self.next_section()
         self.play(
             *(
                 Succession(
@@ -152,25 +153,26 @@ class Main(MovingCameraScene):
                 )
                 for i in main_galaxy.stars
             ),
-            run_time=4
+            run_time=4,
         )
         self.wait()
-        self.next_section()
 
+        self.next_section()
         self.play(
             camera.frame.animate.set(height=galaxies.height).move_to(
                 galaxies.get_center()
             ),
         )
         self.wait()
-        self.next_section()
 
+        self.next_section()
         self.play(
-            *(Transform(galaxy, dot) for galaxy, dot in zip(galaxies, galaxy_dots))
+            *(FadeIn(dot) for dot in galaxy_dots),
+            *(FadeOut(galaxy) for galaxy in galaxies),
         )
         self.wait()
+
         self.next_section()
-        
         for _ in range(15):
             np.random.shuffle(galaxy_dots)
             self.play(
@@ -180,35 +182,49 @@ class Main(MovingCameraScene):
                         for dot in galaxy_dots
                     ),
                     lag_ratio=0.1,
-                    run_time=0.5
+                    run_time=0.5,
                 )
             )
         self.play(
             AnimationGroup(
                 *(dot.animate.set_fill(DARK_GRAY) for dot in galaxy_dots),
                 lag_ratio=0.1,
-                run_time=0.5
+                run_time=0.5,
             )
         )
         self.wait()
-        self.next_section()
-        
-        frame = ImageMobject(scaled[0, :, :])
-        frame.height = 8
-        self.play(FadeIn(frame), *(FadeOut(dot) for dot in galaxy_dots), duration=2)
-        for dot in galaxy_dots:
-            self.remove(dot)
-        self.wait()
-        self.next_section()
-        
-        self.remove(frame)
-        for i in range(80):
-            frame = ImageMobject(scaled[i, :, :])
-            frame.height = 8
-            self.add(frame)
-            self.wait(0.15)
-            self.remove(frame)
 
+        self.next_section()
+
+        def get_frame_updater():
+            elapsed_time = 0
+            old = None
+
+            def update_frame(dt):
+                # capture the variables in the closure
+                nonlocal elapsed_time, old
+                if old is not None:
+                    self.remove(old)
+                # Calculate the current frame based on time elapsed
+                elapsed_time += dt
+                frame_rate = 10  # fps
+                frame_duration = 1 / frame_rate  # seconds
+                frame_index = int(elapsed_time / frame_duration) % scaled.shape[0]
+
+                new_image = ImageMobject(scaled[frame_index, :, :])
+                new_image.height = 8
+                fade_in_run_time = 6.0  # seconds
+                opacity = min(elapsed_time / fade_in_run_time, 1)
+                print(opacity)
+                new_image.fade(1 - opacity)
+                self.add(new_image)
+                old = new_image
+
+            return update_frame
+
+        self.add_updater(get_frame_updater())
+        self.play(*(FadeOut(dot) for dot in galaxy_dots), run_time=1)
+        self.wait(5)
 
 if __name__ == "__main__":
     Main().render(preview=True)

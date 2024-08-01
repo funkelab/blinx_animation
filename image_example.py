@@ -2,7 +2,6 @@
 import numpy as np
 import skimage
 from manim import *
-import matplotlib.pyplot as plt
 
 img = skimage.io.imread("experimental_crop.tif")
 max_proj = skimage.io.imread("max_intensity.png")
@@ -35,14 +34,14 @@ class Image(MovingCameraScene):
 
         for pos in poss:
             self.add(Dot(pos, radius=0.15, color=RED))
-        # self.wait(1)
-        # self.remove(max_proj_obj)
-        # for i in range(20):
-        #     frame = ImageMobject(scaled[i,:,:])
-        #     frame.height=8
-        #     self.add(frame)
-        #     self.wait(0.1)
-        #     self.remove(frame)
+        self.wait(1)
+        self.remove(max_proj_obj)
+        for i in range(20):
+            frame = ImageMobject(scaled[i, :, :])
+            frame.height = 8
+            self.add(frame)
+            self.wait(0.1)
+            self.remove(frame)
 
 
 5
