@@ -158,9 +158,7 @@ class Main(MovingCameraScene):
 
         self.next_section()
         self.play(
-            camera.frame.animate.set(height=8).move_to(
-                galaxies.get_center()
-            ),
+            camera.frame.animate.set(height=8).move_to(galaxies.get_center()),
         )
         self.wait()
 
@@ -170,7 +168,6 @@ class Main(MovingCameraScene):
             *(FadeOut(galaxy) for galaxy in galaxies),
         )
         self.wait()
-
 
         self.next_section()
         for _ in range(15):
@@ -196,6 +193,7 @@ class Main(MovingCameraScene):
         self.wait()
 
         self.next_section()
+
         def get_frame_updater():
             elapsed_time = 0
             old = None
