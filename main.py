@@ -26,7 +26,7 @@ class Blink(AnimationGroup):
                 Indicate(
                     mobject,
                     run_time=np.random.uniform(min_wait, max_wait) / 2,
-                    color=LIGHT_GRAY,
+                    color=GRAY,
                 )
             )
         super().__init__(*animations, **kwargs)
@@ -90,7 +90,6 @@ class Galaxy(Group):
 
 class Main(MovingCameraScene):
     def construct(self):
-        self.next_section()
         galaxies = Group(
             *(
                 Galaxy(np.random.randint(3, 11))
@@ -119,7 +118,7 @@ class Main(MovingCameraScene):
             for galaxy in galaxies
         ]
         for dot in galaxy_dots:
-            dot.z_index = 1
+            dot.z_index = 2
         main_galaxy = galaxies[0]
         main_star = main_galaxy.stars[0]
 
@@ -159,7 +158,7 @@ class Main(MovingCameraScene):
 
         self.next_section()
         self.play(
-            camera.frame.animate.set(height=galaxies.height).move_to(
+            camera.frame.animate.set(height=8).move_to(
                 galaxies.get_center()
             ),
         )
@@ -171,6 +170,7 @@ class Main(MovingCameraScene):
             *(FadeOut(galaxy) for galaxy in galaxies),
         )
         self.wait()
+
 
         self.next_section()
         for _ in range(15):
@@ -185,6 +185,7 @@ class Main(MovingCameraScene):
                     run_time=0.5,
                 )
             )
+
         self.play(
             AnimationGroup(
                 *(dot.animate.set_fill(DARK_GRAY) for dot in galaxy_dots),
@@ -195,7 +196,6 @@ class Main(MovingCameraScene):
         self.wait()
 
         self.next_section()
-
         def get_frame_updater():
             elapsed_time = 0
             old = None
@@ -213,18 +213,30 @@ class Main(MovingCameraScene):
 
                 new_image = ImageMobject(scaled[frame_index, :, :])
                 new_image.height = 8
-                fade_in_run_time = 6.0  # seconds
-                opacity = min(elapsed_time / fade_in_run_time, 1)
-                print(opacity)
-                new_image.fade(1 - opacity)
+                new_image.z_index = 0
                 self.add(new_image)
                 old = new_image
 
             return update_frame
 
+        # self.add_updater(get_frame_updater())
+        full_screen_rect = Rectangle(
+            width=10,
+            height=10,
+            fill_color=BLACK,
+            fill_opacity=1.0,
+            stroke_width=0,
+            z_index=1,
+        )
+        self.add(full_screen_rect)
         self.add_updater(get_frame_updater())
-        self.play(*(FadeOut(dot) for dot in galaxy_dots), run_time=1)
+        self.play(
+            FadeOut(full_screen_rect),
+            *(FadeOut(dot) for dot in galaxy_dots),
+            run_time=3,
+        )
         self.wait(5)
+
 
 if __name__ == "__main__":
     Main().render(preview=True)
