@@ -151,6 +151,16 @@ class Main(MovingCameraScene):
                     Blink(i, min_wait=0.5, max_wait=1.5),
                     Blink(i, min_wait=0.5, max_wait=1.5),
                     Blink(i, min_wait=0.5, max_wait=1.5),
+                    Blink(i, min_wait=0.5, max_wait=1.5),
+                    Blink(i, min_wait=0.5, max_wait=1.5),
+                    Blink(i, min_wait=0.5, max_wait=1.5),
+                    Blink(i, min_wait=0.5, max_wait=1.5),
+                    Blink(i, min_wait=0.5, max_wait=1.5),
+                    Blink(i, min_wait=0.5, max_wait=1.5),
+                    Blink(i, min_wait=0.5, max_wait=1.5),
+                    Blink(i, min_wait=0.5, max_wait=1.5),
+                    Blink(i, min_wait=0.5, max_wait=1.5),
+                    Blink(i, min_wait=0.5, max_wait=1.5),
                 )
                 for i in main_galaxy.stars
             ),
