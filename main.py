@@ -147,24 +147,9 @@ class Main(MovingCameraScene):
         self.next_section()
         self.play(
             *(
-                Succession(
-                    Blink(i, min_wait=0.5, max_wait=1.5),
-                    Blink(i, min_wait=0.5, max_wait=1.5),
-                    Blink(i, min_wait=0.5, max_wait=1.5),
-                    Blink(i, min_wait=0.5, max_wait=1.5),
-                    Blink(i, min_wait=0.5, max_wait=1.5),
-                    Blink(i, min_wait=0.5, max_wait=1.5),
-                    Blink(i, min_wait=0.5, max_wait=1.5),
-                    Blink(i, min_wait=0.5, max_wait=1.5),
-                    Blink(i, min_wait=0.5, max_wait=1.5),
-                    Blink(i, min_wait=0.5, max_wait=1.5),
-                    Blink(i, min_wait=0.5, max_wait=1.5),
-                    Blink(i, min_wait=0.5, max_wait=1.5),
-                    Blink(i, min_wait=0.5, max_wait=1.5),
-                )
+                Succession(*(Blink(i, min_wait=1, max_wait=1.75) for _ in range(12)))
                 for i in main_galaxy.stars
             ),
-            run_time=4,
         )
 
         self.next_section()
